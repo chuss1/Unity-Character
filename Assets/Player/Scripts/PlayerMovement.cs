@@ -6,15 +6,15 @@ public class PlayerMovement : MonoBehaviour {
     private Player player;
     private CharacterController characterController;
     private float moveMult;
-    private float verticalRotation = 0f;
     private bool jumpRequested = false;
 
-
-    private void Start() {
-        player = GetComponent<Player>();
+    public void Initialize(Player player) {
+        this.player = player;
         characterController = GetComponent<CharacterController>();
         moveMult = player.normalSpeedMult;
+    }
 
+    private void Start() {
         player.inputHandler.onSprintStartAction += StartSprinting;
         player.inputHandler.onSprintStopAction += StopSprinting;
         player.inputHandler.onJumpAction += Jump;
@@ -33,8 +33,6 @@ public class PlayerMovement : MonoBehaviour {
         if (player.isGrounded && !jumpRequested) {
             HandleMovement();
         }
-        HandleLook();
-        HandleCameraHeight();
         ApplyGravity();
     }
 
@@ -43,22 +41,23 @@ public class PlayerMovement : MonoBehaviour {
             player.velocity.y = -2f;
         }
 
+        // Determine movement direction based on the current camera mode
         Vector3 moveDirection = player.currentCameraMode == CameraMode.FirstPerson
-            ? transform.forward * player.inputHandler.moveComposite.y + transform.right * player.inputHandler.moveComposite.x
+            ? GetFirstPersonMovement()
             : GetCameraRelativeMovement();
 
         characterController.Move(moveDirection * player.moveSpeed * moveMult * Time.deltaTime);
 
-        if (moveDirection.sqrMagnitude > 0.01f && player.currentCameraMode == CameraMode.ThirdPerson) {
+        // Only rotate the player to face the movement direction in third-person mode
+        if (player.currentCameraMode == CameraMode.ThirdPerson && moveDirection.sqrMagnitude > 0.01f) {
             FaceMoveDirection(moveDirection);
         }
     }
 
-    private Vector3 GetCameraRelativeMovement() {
-        Vector3 cameraForward = new Vector3(player.mainCamera.forward.x, 0, player.mainCamera.forward.z).normalized;
-        Vector3 cameraRight = new Vector3(player.mainCamera.right.x, 0, player.mainCamera.right.z).normalized;
-
-        return cameraForward * player.inputHandler.moveComposite.y + cameraRight * player.inputHandler.moveComposite.x;
+    private Vector3 GetFirstPersonMovement() {
+        // In first-person mode, movement is relative to the player's local axes
+        return transform.forward * player.inputHandler.moveComposite.y +
+               transform.right * player.inputHandler.moveComposite.x;
     }
 
     private void FaceMoveDirection(Vector3 direction) {
@@ -66,21 +65,11 @@ public class PlayerMovement : MonoBehaviour {
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
     }
 
-    private void HandleLook() {
-        Vector2 look = player.inputHandler.lookDelta;
+    private Vector3 GetCameraRelativeMovement() {
+        Vector3 cameraForward = new Vector3(player.mainCamera.forward.x, 0, player.mainCamera.forward.z).normalized;
+        Vector3 cameraRight = new Vector3(player.mainCamera.right.x, 0, player.mainCamera.right.z).normalized;
 
-        if (player.currentCameraMode == CameraMode.FirstPerson) {
-            transform.Rotate(Vector3.up * look.x * player.lookSensitivity);
-
-            verticalRotation -= look.y * player.lookSensitivity;
-            verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
-
-            player.firstPersonCameraHolder.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-        }
-        else if (player.currentCameraMode == CameraMode.ThirdPerson) {
-            // Usually, Cinemachine handles rotation in third-person mode
-            // If you want manual control, you can manipulate Cinemachine's FreeLook axis input here
-        }
+        return cameraForward * player.inputHandler.moveComposite.y + cameraRight * player.inputHandler.moveComposite.x;
     }
 
     private void StartSprinting() {
@@ -124,15 +113,4 @@ public class PlayerMovement : MonoBehaviour {
         }
         player.playerAnimation.TriggerCrouchAnimation(player.isCrouching);
     }
-
-    private void HandleCameraHeight() {
-        Vector3 targetPos = player.isCrouching ? player.crouchingCameraLocalPos : player.standingCameraLocalPos;
-
-        player.firstPersonCameraHolder.localPosition = Vector3.Lerp(
-            player.firstPersonCameraHolder.localPosition,
-            targetPos,
-            Time.deltaTime * player.cameraLerpSpeed
-        );
-    }
-
 }

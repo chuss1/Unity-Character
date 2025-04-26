@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 
 public class PlayerAnimation : MonoBehaviour {
-    private Animator animator;
     private Player player;
-    private InputHandler inputHandler;
+    private Animator animator;
+    private float velocityLerpSpeed;
 
     private static readonly int VelocityHash = Animator.StringToHash("Velocity"); // Hash for the velocity parameter
     private static readonly int JumpHash = Animator.StringToHash("Jump"); // Hash for the jump trigger
@@ -15,13 +15,10 @@ public class PlayerAnimation : MonoBehaviour {
 
     private float currentVelocity = 0f; // Smoothly interpolated velocity
 
-    [Header("Animation Settings")]
-    public float velocityLerpSpeed = 10f; // Speed at which velocity transitions
-
-    private void Start() {
-        player = GetComponent<Player>();
-        inputHandler = player.inputHandler;
+    public void Initialize(Player player) {
+        this.player = player;
         animator = player.animator;
+        velocityLerpSpeed = player.velocityLerpSpeed;
     }
 
     private void Update() {
@@ -39,7 +36,7 @@ public class PlayerAnimation : MonoBehaviour {
     }
 
     private void UpdateVelocity() {
-        Vector2 movementInput = inputHandler.moveComposite;
+        Vector2 movementInput = player.inputHandler.moveComposite;
         float targetVelocity = movementInput.magnitude;
 
         if (player.isCrouching && targetVelocity > 0f) {

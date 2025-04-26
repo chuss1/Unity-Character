@@ -1059,7 +1059,7 @@ MonoBehaviour:
       Owner: {fileID: 1346285223}
       Enabled: 1
       Input:
-        InputAction: {fileID: -5630151704836100654, guid: 1d6e640e716dc4ff6989b73d02023f2b, type: 3}
+        InputAction: {fileID: 1807148852129678542, guid: ddfcf83d1fff3c34d9bd284eba253f70, type: 3}
         Gain: 1
         LegacyInput: 
         LegacyGain: 1
@@ -1072,7 +1072,7 @@ MonoBehaviour:
       Owner: {fileID: 1346285223}
       Enabled: 1
       Input:
-        InputAction: {fileID: -5630151704836100654, guid: 1d6e640e716dc4ff6989b73d02023f2b, type: 3}
+        InputAction: {fileID: 1807148852129678542, guid: ddfcf83d1fff3c34d9bd284eba253f70, type: 3}
         Gain: -1
         LegacyInput: 
         LegacyGain: 1
@@ -1083,9 +1083,9 @@ MonoBehaviour:
         DecelTime: 0.2
     - Name: Orbit Scale
       Owner: {fileID: 1346285223}
-      Enabled: 1
+      Enabled: 0
       Input:
-        InputAction: {fileID: 5082991133974614888, guid: 1d6e640e716dc4ff6989b73d02023f2b, type: 3}
+        InputAction: {fileID: -1989756005750008778, guid: ddfcf83d1fff3c34d9bd284eba253f70, type: 3}
         Gain: -1
         LegacyInput: 
         LegacyGain: 1
@@ -1350,6 +1350,7 @@ GameObject:
   - component: {fileID: 1485088475}
   - component: {fileID: 1485088474}
   - component: {fileID: 1485088473}
+  - component: {fileID: 1485088476}
   - component: {fileID: 1485088472}
   - component: {fileID: 1485088471}
   - component: {fileID: 1485088470}
@@ -1409,7 +1410,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 691bc4fc7184dda409c8c51eedb604ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocityLerpSpeed: 10
 --- !u!114 &1485088473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1426,24 +1426,24 @@ MonoBehaviour:
   isGrounded: 0
   isSprinting: 0
   isCrouching: 0
-  standingHeight: 1.9
-  crouchingHeight: 1.9
   moveSpeed: 5
   normalSpeedMult: 1
   sprintSpeedMult: 1.5
   crouchSpeedMult: 0.5
-  lookSensitivity: 10
+  lookSensitivity: 0.01
   jumpHeight: 1.5
   gravity: -9.81
-  playerMesh1: {fileID: 5221520413311042518}
-  playerMesh2: {fileID: 9094798725661844959}
+  standingHeight: 1.9
+  crouchingHeight: 1
   currentCameraMode: 1
   firstPersonCameraHolder: {fileID: 1487866480}
+  thirdPersonCameraTarget: {fileID: 530167313}
   firstPersonCamera: {fileID: 786139441}
   thirdPersonCamera: {fileID: 1346285224}
-  standingCameraLocalPos: {x: 0, y: 1.6, z: 0}
-  crouchingCameraLocalPos: {x: 0, y: 1, z: 0}
+  standingCameraLocalPos: {x: 0, y: 1.6, z: 0.3}
+  crouchingCameraLocalPos: {x: 0, y: 1, z: 0.3}
   cameraLerpSpeed: 10
+  velocityLerpSpeed: 10
 --- !u!114 &1485088474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1477,6 +1477,18 @@ Transform:
   - {fileID: 530167313}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1485088476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1485088469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7c3ca43c34515144a57eb698acf5851, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1487866479
 GameObject:
   m_ObjectHideFlags: 0
