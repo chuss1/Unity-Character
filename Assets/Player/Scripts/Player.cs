@@ -4,11 +4,12 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [Header("Player Components")]
-    public PlayerMovement playerMovement {get; private set;}
-    public PlayerAnimation playerAnimation {get; private set;}
-    public InputHandler inputHandler {get; private set;}
-    public Animator animator {get; private set;}
-    public Transform mainCamera {get; private set;}
+    public PlayerMovement playerMovement { get; private set; }
+    public PlayerAnimation playerAnimation { get; private set; }
+    public PlayerCamera playerCamera { get; private set; }
+    public InputHandler inputHandler { get; private set; }
+    public Animator animator { get; private set; }
+    public Transform mainCamera { get; private set; }
     private CharacterController characterController;
     public Vector3 velocity;
 
@@ -36,6 +37,11 @@ public class Player : MonoBehaviour
     public CinemachineCamera firstPersonCamera;
     public CinemachineCamera thirdPersonCamera;
 
+    [Header("First Person Settings")]
+    public Vector3 standingCameraLocalPos = new Vector3(0f, 1.6f, 0f);
+    public Vector3 crouchingCameraLocalPos = new Vector3(0f, 1.0f, 0f);
+    public float cameraLerpSpeed = 10f;
+
 
     private void Awake()
     {
@@ -46,34 +52,34 @@ public class Player : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         mainCamera = Camera.main.transform;
         standingHeight = characterController.height;
+        standingCameraLocalPos = firstPersonCameraHolder.localPosition;
 
-        Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the center of the screen
-        Cursor.visible = false; // Hide the cursor
-        
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         if (currentCameraMode == CameraMode.FirstPerson)
         {
-            firstPersonCamera.Priority = 1; // Activate FP camera
-            thirdPersonCamera.Priority = 0; // Deactivate TP camera
-            // playerMesh1.GetComponent<SkinnedMeshRenderer>().enabled = false;
-            // playerMesh2.GetComponent<SkinnedMeshRenderer>().enabled = false;
+            firstPersonCamera.Priority = 1;
+            thirdPersonCamera.Priority = 0;
 
             lookSensitivity = lookSensitivity * 0.1f;
         }
         else
         {
-            firstPersonCamera.Priority = 0; // Deactivate FP camera
-            thirdPersonCamera.Priority = 1; // Activate TP camera
+            firstPersonCamera.Priority = 0;
+            thirdPersonCamera.Priority = 1;
         }
     }
 
     private void OnEnable()
     {
-        inputHandler.onPOVToggleAction += ToggleCameraMode;   
+        inputHandler.onPOVToggleAction += ToggleCameraMode;
     }
 
     private void OnDisable()
     {
-        inputHandler.onPOVToggleAction -= ToggleCameraMode;   
+        inputHandler.onPOVToggleAction -= ToggleCameraMode;
     }
 
     private void ToggleCameraMode()
@@ -82,9 +88,9 @@ public class Player : MonoBehaviour
         {
             currentCameraMode = CameraMode.ThirdPerson;
 
-            firstPersonCamera.Priority = 0; // Deactivate FP camera
-            thirdPersonCamera.Priority = 1; // Activate TP camera
-            lookSensitivity = lookSensitivity * 10f; // Reset sensitivity for third person
+            firstPersonCamera.Priority = 0;
+            thirdPersonCamera.Priority = 1;
+            lookSensitivity = lookSensitivity * 10f;
 
             mainCamera.GetComponent<Camera>().cullingMask = LayerMask.GetMask("Default", "ThirdPersonOnly");
         }
@@ -92,14 +98,11 @@ public class Player : MonoBehaviour
         {
             currentCameraMode = CameraMode.FirstPerson;
 
-            firstPersonCamera.Priority = 1; // Activate FP camera
-            thirdPersonCamera.Priority = 0; // Deactivate TP camera
-            lookSensitivity = lookSensitivity * 0.1f; // Reset sensitivity for first person
+            firstPersonCamera.Priority = 1;
+            thirdPersonCamera.Priority = 0;
+            lookSensitivity = lookSensitivity * 0.1f;
 
-            mainCamera.GetComponent<Camera>().cullingMask = LayerMask.GetMask("Default", "FirstPersonOnly");            
+            mainCamera.GetComponent<Camera>().cullingMask = LayerMask.GetMask("Default", "FirstPersonOnly");
         }
-
-        // playerMesh1.GetComponent<SkinnedMeshRenderer>().enabled = currentCameraMode != CameraMode.FirstPerson;
-        // playerMesh2.GetComponent<SkinnedMeshRenderer>().enabled = currentCameraMode != CameraMode.FirstPerson;
     }
 }

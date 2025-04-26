@@ -1,16 +1,13 @@
 using UnityEngine;
 
-public class JumpAnimTrigger : MonoBehaviour
-{
+public class JumpAnimTrigger : MonoBehaviour {
     private Player player;
 
-    private void Start()
-    {
+    private void Start() {
         player = GetComponentInParent<Player>();
     }
 
-    public void ApplyJumpPhysics()
-    {
+    public void ApplyJumpPhysics() {
         player.playerMovement.ApplyJumpForce(); // Call the method in PlayerMovement to apply the jump force
     }
 }

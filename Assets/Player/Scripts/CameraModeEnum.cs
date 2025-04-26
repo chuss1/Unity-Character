@@ -1,5 +1,4 @@
-public enum CameraMode
-{
+public enum CameraMode {
     FirstPerson,
     ThirdPerson
 }

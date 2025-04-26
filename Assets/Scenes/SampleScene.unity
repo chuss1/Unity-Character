@@ -1441,6 +1441,9 @@ MonoBehaviour:
   firstPersonCameraHolder: {fileID: 1487866480}
   firstPersonCamera: {fileID: 786139441}
   thirdPersonCamera: {fileID: 1346285224}
+  standingCameraLocalPos: {x: 0, y: 1.6, z: 0}
+  crouchingCameraLocalPos: {x: 0, y: 1, z: 0}
+  cameraLerpSpeed: 10
 --- !u!114 &1485088474
 MonoBehaviour:
   m_ObjectHideFlags: 0

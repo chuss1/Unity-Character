@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
 
-public class PlayerAnimation : MonoBehaviour
-{
+public class PlayerAnimation : MonoBehaviour {
     private Animator animator;
     private Player player;
     private InputHandler inputHandler;
@@ -19,50 +18,40 @@ public class PlayerAnimation : MonoBehaviour
     [Header("Animation Settings")]
     public float velocityLerpSpeed = 10f; // Speed at which velocity transitions
 
-    private void Start()
-    {
+    private void Start() {
         player = GetComponent<Player>();
         inputHandler = player.inputHandler;
         animator = player.animator;
     }
 
-    private void Update()
-    {
+    private void Update() {
         UpdateVelocity();
         UpdateFallingState();
     }
 
-    public void TriggerCrouchAnimation(bool isCrouching)
-    {
-        if (isCrouching)
-        {
+    public void TriggerCrouchAnimation(bool isCrouching) {
+        if (isCrouching) {
             animator.SetTrigger(CrouchEnterHash); // Trigger crouch enter animation
         }
-        else
-        {
+        else {
             animator.SetTrigger(CrouchExitHash); // Trigger crouch exit animation
         }
     }
 
-    private void UpdateVelocity()
-    {
+    private void UpdateVelocity() {
         Vector2 movementInput = inputHandler.moveComposite;
         float targetVelocity = movementInput.magnitude;
 
-        if (player.isCrouching && targetVelocity > 0f)
-        {
+        if (player.isCrouching && targetVelocity > 0f) {
             targetVelocity = 1f; // Crouch walking
         }
-        else if (player.isSprinting)
-        {
+        else if (player.isSprinting) {
             targetVelocity = 1f; // Running
         }
-        else if (targetVelocity > 0f)
-        {
+        else if (targetVelocity > 0f) {
             targetVelocity = 0.5f; // Walking
         }
-        else
-        {
+        else {
             targetVelocity = 0f; // Idle
         }
 
@@ -73,17 +62,14 @@ public class PlayerAnimation : MonoBehaviour
         animator.SetFloat(VelocityHash, currentVelocity);
     }
 
-    private void UpdateFallingState()
-    {
+    private void UpdateFallingState() {
         // Update grounded and falling states
         animator.SetBool(IsGroundedHash, player.isGrounded);
         animator.SetBool(IsFallingHash, !player.isGrounded && player.velocity.y < 0);
     }
 
-    public void TriggerJumpAnimation()
-    {
-        if (player.isGrounded)
-        {
+    public void TriggerJumpAnimation() {
+        if (player.isGrounded) {
             animator.SetTrigger(JumpHash); // Trigger the jump animation
         }
     }
