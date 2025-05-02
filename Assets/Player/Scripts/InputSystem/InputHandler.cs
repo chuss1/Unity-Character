@@ -11,12 +11,7 @@ public class InputHandler : MonoBehaviour, PlayerInput.IPlayerBaseActions {
     public Action onSprintAction;
     public Action onCrouchAction;
 
-    private Player player;
     private PlayerInput playerInput;
-
-    private void Awake() {
-        player = GetComponent<Player>();
-    }
 
     private void OnEnable() {
         if (playerInput != null)
@@ -32,9 +27,7 @@ public class InputHandler : MonoBehaviour, PlayerInput.IPlayerBaseActions {
     }
 
     public void OnMovement(InputAction.CallbackContext context) {
-        // Update player.velocity based on input
-        Vector2 moveInput = context.ReadValue<Vector2>();
-        player.velocity = new Vector3(moveInput.x, player.velocity.y, moveInput.y); // Map input to velocity
+        moveComposite = context.ReadValue<Vector2>();
     }
 
     public void OnLook(InputAction.CallbackContext context) {

@@ -47,7 +47,6 @@ public class Player : MonoBehaviour {
         animator = GetComponentInChildren<Animator>();
         mainCamera = Camera.main.transform;
 
-        // Initialize settings for other scripts
         playerMovement.Initialize(this);
         playerAnimation.Initialize(this);
         playerCamera.Initialize(this);

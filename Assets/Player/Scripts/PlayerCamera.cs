@@ -3,7 +3,6 @@ using Unity.Cinemachine;
 
 public class PlayerCamera : MonoBehaviour {
     private Player player;
-
     private CameraMode currentCameraMode;
     private Transform firstPersonCameraHolder;
     private CinemachineCamera firstPersonCamera;
@@ -11,12 +10,10 @@ public class PlayerCamera : MonoBehaviour {
     private Vector3 standingCameraLocalPos;
     private Vector3 crouchingCameraLocalPos;
     private float cameraLerpSpeed;
-
     private float verticalRotation = 0f;
 
     public void Initialize(Player player) {
         this.player = player;
-
         currentCameraMode = player.currentCameraMode;
         firstPersonCameraHolder = player.firstPersonCameraHolder;
         firstPersonCamera = player.firstPersonCamera;
@@ -50,13 +47,11 @@ public class PlayerCamera : MonoBehaviour {
     private void ToggleCameraMode() {
         if (currentCameraMode == CameraMode.FirstPerson) {
             currentCameraMode = CameraMode.ThirdPerson;
-
             firstPersonCamera.Priority = 0;
             thirdPersonCamera.Priority = 1;
         }
         else {
             currentCameraMode = CameraMode.FirstPerson;
-
             firstPersonCamera.Priority = 1;
             thirdPersonCamera.Priority = 0;
         }
@@ -65,23 +60,16 @@ public class PlayerCamera : MonoBehaviour {
 
     private void HandleLook() {
         Vector2 look = player.inputHandler.lookDelta;
-
         if (currentCameraMode == CameraMode.FirstPerson) {
-            // First-person camera rotation
             transform.Rotate(Vector3.up * look.x * player.lookSensitivity);
-
             verticalRotation -= look.y * player.lookSensitivity;
             verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
-
             firstPersonCameraHolder.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-        }
-        else if (currentCameraMode == CameraMode.ThirdPerson) {
         }
     }
 
     private void HandleCameraHeight() {
         Vector3 targetPos = player.isCrouching ? crouchingCameraLocalPos : standingCameraLocalPos;
-
         firstPersonCameraHolder.localPosition = Vector3.Lerp(
             firstPersonCameraHolder.localPosition,
             targetPos,

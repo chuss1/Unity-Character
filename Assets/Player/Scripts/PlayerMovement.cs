@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -7,6 +6,7 @@ public class PlayerMovement : MonoBehaviour {
     private CharacterController characterController;
     private float moveMult;
     private bool jumpRequested = false;
+    [SerializeField] private Vector3 moveVelocity;
 
     public void Initialize(Player player) {
         this.player = player;
@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void Start() {
-        player.inputHandler.onSprintAction += ToggleSprinting; // Bind sprint toggle to input action
+        player.inputHandler.onSprintAction += ToggleSprinting;
         player.inputHandler.onJumpAction += Jump;
         player.inputHandler.onCrouchAction += ToggleCrouch;
     }
@@ -31,14 +31,7 @@ public class PlayerMovement : MonoBehaviour {
         if (player.isGrounded && !jumpRequested) {
             HandleMovement();
         }
-
-        Vector3 horizontalVelocity = new Vector3(player.velocity.x, 0, player.velocity.z);
-        if (player.isSprinting && horizontalVelocity.magnitude <= 0.1f) {
-            ToggleSprinting();
-        }
-
         ApplyGravity();
-        Debug.Log("Velocity: " + horizontalVelocity.magnitude); // Debug log for velocity
     }
 
     private void HandleMovement() {
@@ -46,23 +39,18 @@ public class PlayerMovement : MonoBehaviour {
             player.velocity.y = -2f;
         }
 
-        // Determine movement direction based on the current camera mode
+        player.velocity = new Vector3(player.inputHandler.moveComposite.x, player.velocity.y, player.inputHandler.moveComposite.y);
+
         Vector3 moveDirection = player.currentCameraMode == CameraMode.FirstPerson
-            ? GetFirstPersonMovement()
-            : GetCameraRelativeMovement();
+            ? GetFirstPersonMovement(player.velocity)
+            : GetCameraRelativeMovement(player.velocity);
 
-        characterController.Move(moveDirection * player.moveSpeed * moveMult * Time.deltaTime);
+        moveVelocity = moveDirection * player.moveSpeed * moveMult;
+        characterController.Move(moveVelocity * Time.deltaTime);
 
-        // Only rotate the player to face the movement direction in third-person mode
         if (player.currentCameraMode == CameraMode.ThirdPerson && moveDirection.sqrMagnitude > 0.01f) {
             FaceMoveDirection(moveDirection);
         }
-    }
-
-    private Vector3 GetFirstPersonMovement() {
-        // In first-person mode, movement is relative to the player's local axes
-        return transform.forward * player.velocity.z +
-               transform.right * player.velocity.x;
     }
 
     private void FaceMoveDirection(Vector3 direction) {
@@ -70,17 +58,25 @@ public class PlayerMovement : MonoBehaviour {
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
     }
 
-    private Vector3 GetCameraRelativeMovement() {
+    private Vector3 GetFirstPersonMovement(Vector3 velocity) {
+        return transform.forward * velocity.z + transform.right * velocity.x;
+    }
+
+    private Vector3 GetCameraRelativeMovement(Vector3 velocity) {
         Vector3 cameraForward = new Vector3(player.mainCamera.forward.x, 0, player.mainCamera.forward.z).normalized;
         Vector3 cameraRight = new Vector3(player.mainCamera.right.x, 0, player.mainCamera.right.z).normalized;
 
-        return cameraForward * player.velocity.z + cameraRight * player.velocity.x;
+        Vector3 move = cameraForward * velocity.z + cameraRight * velocity.x;
+        Debug.Log("Camera forward: " + cameraForward + ", Camera right: " + cameraRight);
+        Debug.Log("Move direction: " + move);
+
+        return move.magnitude > 1f ? move.normalized : move;
     }
 
     private void ToggleSprinting() {
-        if (player.isCrouching) return; // Prevent sprinting while crouching
+        if (player.isCrouching) return;
 
-        player.isSprinting = !player.isSprinting; // Toggle sprinting state
+        player.isSprinting = !player.isSprinting;
         moveMult = player.isSprinting ? player.sprintSpeedMult : player.normalSpeedMult;
     }
 
@@ -106,10 +102,14 @@ public class PlayerMovement : MonoBehaviour {
 
         if (player.isCrouching) {
             characterController.height = player.crouchingHeight;
+            characterController.center = new Vector3(0, 0.6f, 0);
+            characterController.radius = 0.55f;
             moveMult = player.crouchSpeedMult;
         }
         else {
             characterController.height = player.standingHeight;
+            characterController.center = new Vector3(0, 1f, 0);
+            characterController.radius = 0.25f;
             moveMult = player.normalSpeedMult;
         }
         player.playerAnimation.TriggerCrouchAnimation(player.isCrouching);
