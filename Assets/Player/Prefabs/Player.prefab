@@ -2942,11 +2942,14 @@ MonoBehaviour:
   normalSpeedMult: 1
   sprintSpeedMult: 1.5
   crouchSpeedMult: 0.5
-  lookSensitivity: 0.01
   jumpHeight: 1.5
   gravity: -9.81
   standingHeight: 1.9
   crouchingHeight: 1
+  standingCenter: {x: 0, y: 1, z: 0}
+  crouchingCenter: {x: 0, y: 0.7, z: 0}
+  standingRadius: 0.25
+  crouchingRadius: 0.6
   currentCameraMode: 1
   firstPersonCameraHolder: {fileID: 6334563866180123248}
   thirdPersonCameraTarget: {fileID: 7822552701713326278}
@@ -2955,6 +2958,7 @@ MonoBehaviour:
   standingCameraLocalPos: {x: 0, y: 1.6, z: 0.3}
   crouchingCameraLocalPos: {x: 0, y: 1, z: 0.3}
   cameraLerpSpeed: 10
+  lookSensitivity: 0.01
   velocityLerpSpeed: 10
 --- !u!114 &531478355357938366
 MonoBehaviour:
@@ -2980,6 +2984,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 691bc4fc7184dda409c8c51eedb604ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  landingDistance: 1
 --- !u!114 &5222073973710208495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2992,6 +2997,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80bd472390be78944b26f9d04bb89ecb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveVelocity: {x: 0, y: 0, z: 0}
 --- !u!143 &1403720656667934779
 CharacterController:
   m_ObjectHideFlags: 0

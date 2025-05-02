@@ -10,22 +10,38 @@ public class Player : MonoBehaviour {
     public Animator animator { get; private set; }
     public Transform mainCamera { get; private set; }
 
+    [Space]
+    [Header("Player State")]
     public Vector3 velocity;
     public bool isGrounded;
     public bool isSprinting;
     public bool isCrouching;
 
-    [Header("Player Settings")]
+    [Space]
+    [Header("Movement Settings")]
     public float moveSpeed = 5f;
+    [Tooltip("Multiplier for normal movement speed.")]
     public float normalSpeedMult = 1f;
+    [Tooltip("Multiplier for sprinting speed.")]
     public float sprintSpeedMult = 1.5f;
+    [Tooltip("Multiplier for crouching speed.")]
     public float crouchSpeedMult = 0.5f;
-    public float lookSensitivity = 10f;
+
+    [Space]
+    [Header("Jump and Gravity Settings")]
     public float jumpHeight = 1.5f;
     public float gravity = -9.81f;
+
+    [Space]
+    [Header("Player Dimensions")]
     public float standingHeight;
     public float crouchingHeight;
+    public Vector3 standingCenter = new Vector3(0f, 0.5f, 0f);
+    public Vector3 crouchingCenter = new Vector3(0f, 0.25f, 0f);
+    public float standingRadius = 0.25f;
+    public float crouchingRadius = 0.6f;
 
+    [Space]
     [Header("Camera Settings")]
     public CameraMode currentCameraMode;
     public Transform firstPersonCameraHolder;
@@ -35,7 +51,9 @@ public class Player : MonoBehaviour {
     public Vector3 standingCameraLocalPos = new Vector3(0f, 1.6f, 0f);
     public Vector3 crouchingCameraLocalPos = new Vector3(0f, 1.0f, 0f);
     public float cameraLerpSpeed = 10f;
+    public float lookSensitivity = 10f;
 
+    [Space]
     [Header("Animation Settings")]
     public float velocityLerpSpeed = 10f;
 

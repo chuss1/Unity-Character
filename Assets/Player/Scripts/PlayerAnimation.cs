@@ -5,6 +5,7 @@ public class PlayerAnimation : MonoBehaviour {
     private Player player;
     private Animator animator;
     private float velocityLerpSpeed;
+    private bool isLanding = false;
 
     private static readonly int VelocityHash = Animator.StringToHash("Velocity");
     private static readonly int JumpHash = Animator.StringToHash("Jump");
@@ -12,8 +13,13 @@ public class PlayerAnimation : MonoBehaviour {
     private static readonly int CrouchExitHash = Animator.StringToHash("CrouchExit");
     private static readonly int IsFallingHash = Animator.StringToHash("IsFalling");
     private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
+    private static readonly int StartLandHash = Animator.StringToHash("StartLand");
 
     private float currentVelocity = 0f;
+
+    [Header("Landing Settings")]
+    [Tooltip("Distance from the ground to trigger the landing animation.")]
+    [SerializeField] private float landingDistance = 1.0f;
 
     public void Initialize(Player player) {
         this.player = player;
@@ -24,6 +30,7 @@ public class PlayerAnimation : MonoBehaviour {
     private void Update() {
         UpdateVelocity();
         UpdateFallingState();
+        CheckForLanding();
     }
 
     public void TriggerCrouchAnimation(bool isCrouching) {
@@ -36,9 +43,11 @@ public class PlayerAnimation : MonoBehaviour {
     }
 
     private void UpdateVelocity() {
-        Vector3 movementInput = new Vector3(player.velocity.x, 0, player.velocity.z);
-        float targetVelocity = movementInput.magnitude;
+        // Calculate horizontal velocity (X and Z only)
+        Vector3 horizontalVelocity = new Vector3(player.velocity.x, 0, player.velocity.z);
+        float targetVelocity = horizontalVelocity.magnitude;
 
+        // Adjust target velocity based on player state
         if (player.isCrouching && targetVelocity > 0f) {
             targetVelocity = 1f;
         }
@@ -52,18 +61,39 @@ public class PlayerAnimation : MonoBehaviour {
             targetVelocity = 0f;
         }
 
+        // Smoothly interpolate the velocity for animation
         currentVelocity = Mathf.Lerp(currentVelocity, targetVelocity, Time.deltaTime * velocityLerpSpeed);
         animator.SetFloat(VelocityHash, currentVelocity);
     }
 
     private void UpdateFallingState() {
+        // Update grounded and falling states based on vertical velocity (Y)
         animator.SetBool(IsGroundedHash, player.isGrounded);
         animator.SetBool(IsFallingHash, !player.isGrounded && player.velocity.y < 0);
+    }
+
+    private void CheckForLanding() {
+        // Only check for landing if the player is falling
+        if (!player.isGrounded && player.velocity.y < 0 && !isLanding) {
+            // Draw the raycast in the Scene view for debugging
+            Debug.DrawRay(transform.position, Vector3.down * landingDistance, Color.red);
+
+            // Perform a raycast to check the distance to the ground
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, landingDistance)) {
+                isLanding = true;
+                // Trigger the landing animation if within the landing distance
+                animator.SetTrigger(StartLandHash);
+            }
+        }
     }
 
     public void TriggerJumpAnimation() {
         if (player.isGrounded) {
             animator.SetTrigger(JumpHash);
         }
+    }
+
+    public void DeactivateLanding() {
+        isLanding = false;
     }
 }
