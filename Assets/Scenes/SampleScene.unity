@@ -2197,17 +2197,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8366781396271479848, guid: f9b96f8d6761393469d0ace55eafcbf8, type: 3}
-      propertyPath: landingDistance
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8564165311082914722, guid: f9b96f8d6761393469d0ace55eafcbf8, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 8661411705546086458, guid: f9b96f8d6761393469d0ace55eafcbf8, type: 3}
-      propertyPath: jumpHeight
-      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

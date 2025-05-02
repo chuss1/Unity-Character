@@ -16,10 +16,7 @@ public class PlayerAnimation : MonoBehaviour {
     private static readonly int StartLandHash = Animator.StringToHash("StartLand");
 
     private float currentVelocity = 0f;
-
-    [Header("Landing Settings")]
-    [Tooltip("Distance from the ground to trigger the landing animation.")]
-    [SerializeField] private float landingDistance = 1.0f;
+    private float landingDistance = .8f;
 
     public void Initialize(Player player) {
         this.player = player;
@@ -80,10 +77,18 @@ public class PlayerAnimation : MonoBehaviour {
 
             // Perform a raycast to check the distance to the ground
             if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, landingDistance)) {
-                isLanding = true;
-                // Trigger the landing animation if within the landing distance
-                animator.SetTrigger(StartLandHash);
+                // Ensure the player is falling vertically enough to trigger the landing
+                if (Mathf.Abs(player.velocity.y) > 0.5f) { // Adjust the threshold as needed
+                    isLanding = true;
+                    // Trigger the landing animation if within the landing distance
+                    animator.SetTrigger(StartLandHash);
+                }
             }
+        }
+
+        // Reset the landing state when grounded
+        if (player.isGrounded) {
+            isLanding = false;
         }
     }
 
@@ -91,9 +96,5 @@ public class PlayerAnimation : MonoBehaviour {
         if (player.isGrounded) {
             animator.SetTrigger(JumpHash);
         }
-    }
-
-    public void DeactivateLanding() {
-        isLanding = false;
     }
 }

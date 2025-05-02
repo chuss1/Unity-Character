@@ -10,8 +10,4 @@ public class JumpAnimTrigger : MonoBehaviour {
     public void ApplyJumpPhysics() {
         player.playerMovement.ApplyJumpForce();
     }
-
-    public void DeactivateLanding() {
-        player.playerAnimation.DeactivateLanding();
-    }
 }

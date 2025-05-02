@@ -6,7 +6,6 @@ public class PlayerMovement : MonoBehaviour {
     private CharacterController characterController;
     private float moveMult;
     private bool jumpRequested = false;
-    [SerializeField] private Vector3 moveVelocity;
 
     public void Initialize(Player player) {
         this.player = player;
