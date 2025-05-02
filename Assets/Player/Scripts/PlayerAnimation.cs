@@ -36,7 +36,7 @@ public class PlayerAnimation : MonoBehaviour {
     }
 
     private void UpdateVelocity() {
-        Vector2 movementInput = player.inputHandler.moveComposite;
+        Vector3 movementInput = new Vector3(player.velocity.x, 0, player.velocity.z);
         float targetVelocity = movementInput.magnitude;
 
         if (player.isCrouching && targetVelocity > 0f) {

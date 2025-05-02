@@ -15,15 +15,13 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void Start() {
-        player.inputHandler.onSprintStartAction += StartSprinting;
-        player.inputHandler.onSprintStopAction += StopSprinting;
+        player.inputHandler.onSprintAction += ToggleSprinting; // Bind sprint toggle to input action
         player.inputHandler.onJumpAction += Jump;
         player.inputHandler.onCrouchAction += ToggleCrouch;
     }
 
     private void OnDestroy() {
-        player.inputHandler.onSprintStartAction -= StartSprinting;
-        player.inputHandler.onSprintStopAction -= StopSprinting;
+        player.inputHandler.onSprintAction -= ToggleSprinting;
         player.inputHandler.onJumpAction -= Jump;
         player.inputHandler.onCrouchAction -= ToggleCrouch;
     }
@@ -33,7 +31,14 @@ public class PlayerMovement : MonoBehaviour {
         if (player.isGrounded && !jumpRequested) {
             HandleMovement();
         }
+
+        Vector3 horizontalVelocity = new Vector3(player.velocity.x, 0, player.velocity.z);
+        if (player.isSprinting && horizontalVelocity.magnitude <= 0.1f) {
+            ToggleSprinting();
+        }
+
         ApplyGravity();
+        Debug.Log("Velocity: " + horizontalVelocity.magnitude); // Debug log for velocity
     }
 
     private void HandleMovement() {
@@ -56,8 +61,8 @@ public class PlayerMovement : MonoBehaviour {
 
     private Vector3 GetFirstPersonMovement() {
         // In first-person mode, movement is relative to the player's local axes
-        return transform.forward * player.inputHandler.moveComposite.y +
-               transform.right * player.inputHandler.moveComposite.x;
+        return transform.forward * player.velocity.z +
+               transform.right * player.velocity.x;
     }
 
     private void FaceMoveDirection(Vector3 direction) {
@@ -69,18 +74,14 @@ public class PlayerMovement : MonoBehaviour {
         Vector3 cameraForward = new Vector3(player.mainCamera.forward.x, 0, player.mainCamera.forward.z).normalized;
         Vector3 cameraRight = new Vector3(player.mainCamera.right.x, 0, player.mainCamera.right.z).normalized;
 
-        return cameraForward * player.inputHandler.moveComposite.y + cameraRight * player.inputHandler.moveComposite.x;
+        return cameraForward * player.velocity.z + cameraRight * player.velocity.x;
     }
 
-    private void StartSprinting() {
-        if (player.isCrouching) return;
-        player.isSprinting = true;
-        moveMult = player.sprintSpeedMult;
-    }
+    private void ToggleSprinting() {
+        if (player.isCrouching) return; // Prevent sprinting while crouching
 
-    private void StopSprinting() {
-        player.isSprinting = false;
-        moveMult = player.normalSpeedMult;
+        player.isSprinting = !player.isSprinting; // Toggle sprinting state
+        moveMult = player.isSprinting ? player.sprintSpeedMult : player.normalSpeedMult;
     }
 
     private void Jump() {
