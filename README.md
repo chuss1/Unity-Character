@@ -48,8 +48,8 @@ The **Universal Unity3D Character Controller** is a flexible and easy-to-use cha
 ## Roadmap
 
 - [x] Initial release
-- [ ] Crouch reworking
-- [ ] Jump reworking
+- [X] Crouch reworking
+- [X] Jump reworking
 - [ ] Climbing and ledge grabbing
 - [ ] Inverse Kinematics for feet (maybe?)
 
